@@ -4,11 +4,11 @@
 | Nim | NAMA |
 | ------ | ------ |
 | 22.83.0767 | Rodif Zainul Isro'i|
-| 22.83.0789 | Muhammad Saiful Aji |
 | 22.83.0786 | Muh Fiki Saefulloh |
+| 22.83.0789 | Muhammad Saiful Aji |
+| 22.83.0799 | Putri Rahmawati |
 | 22.83.0803 | Ridho Fathoni Muqorrobin |
 | 22.83.0815 | Zaimy Cakra Andika |
-| 22.83.0799 | Putri Rahmawati |
 
 **Kelompok kami membuat monitoring log menggunakan WAZUH SIEM**
 
