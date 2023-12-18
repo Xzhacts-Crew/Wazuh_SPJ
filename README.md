@@ -10,7 +10,7 @@
 | 22.83.0815 | Zaimy Cakra Andika |
 | 22.83.0799 | Putri Rahmawati |
 
-**Kelompok kami membuat monitoring log menggunakan WAZUH XIEM**
+**Kelompok kami membuat monitoring log menggunakan WAZUH SIEM**
 
 Instalasi Wazuh
 
