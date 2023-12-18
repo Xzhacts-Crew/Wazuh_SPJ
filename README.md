@@ -1,16 +1,16 @@
 #WAZUH SPJ
-> Anggota Kelompok 09:
+**Anggota Kelompok 09:**
 
 | Nim | NAMA |
 | ------ | ------ |
-| 22.83.0767 | Rodif zainul isro'i|
-| 22.83.0789 | Muhammad saiful aji |
-| 22.83.0786 | Muh fiki saefulloh |
-| 22.83.0803 | Ridho fathoni muqorrobin |
-| 22.83.0815 | Zaimy cakra andika |
-| 22.83.0799 | Putri rahmawati |
+| 22.83.0767 | Rodif Zainul Isro'i|
+| 22.83.0789 | Muhammad Saiful Aji |
+| 22.83.0786 | Muh Fiki Saefulloh |
+| 22.83.0803 | Ridho Fathoni Muqorrobin |
+| 22.83.0815 | Zaimy Cakra Andika |
+| 22.83.0799 | Putri Rahmawati |
 
-> Kelompok kami membuat monitoring log menggunakan WAZUH XIEM
+**Kelompok kami membuat monitoring log menggunakan WAZUH XIEM**
 
 Instalasi Wazuh
 
