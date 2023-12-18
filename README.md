@@ -3,12 +3,12 @@ anggoota kelompok 09:
 
 | Nim | NAMA |
 | ------ | ------ |
-| 22.83.0767 | [Rodif zainul isro'i] |
-| 22.83.0789 | [Muhammad saiful aji] |
-| 22.83.0786 | [Muh fiki saefulloh] |
-| 22.83.0803 | [Ridho fathoni muqorrobin] |
-| 22.83.0815 | [Zaimy cakra andika] |
-| 22.83.0799 | [Putri rahmawati] |
+| 22.83.0767 | Rodif zainul isro'i|
+| 22.83.0789 | Muhammad saiful aji |
+| 22.83.0786 | Muh fiki saefulloh |
+| 22.83.0803 | Ridho fathoni muqorrobin |
+| 22.83.0815 | Zaimy cakra andika |
+| 22.83.0799 | Putri rahmawati |
 
 > Kelompok kami membuat monitoring log menggunakan WAZUH XIEM
 
