@@ -1,5 +1,5 @@
 #WAZUH SPJ
-anggoota kelompok 09:
+> Anggota Kelompok 09:
 
 | Nim | NAMA |
 | ------ | ------ |
