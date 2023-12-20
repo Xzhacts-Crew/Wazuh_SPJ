@@ -259,5 +259,84 @@ Install Wazuh Agent pada Linux
    ![image](https://github.com/rodipisroi/LinuxServer/assets/104636035/5c3c1197-1346-44af-9fea-a4456d69489f)
 
 
-   
-    
+**Memblokir serangan brute force SSH dengan respons aktif**
+
+1. Buka file /var/essec/etc/ossec.conf dan verifikasi
+```sh
+<command>
+  <name>firewall-drop</name>
+  <executable>firewall-drop</executable>
+  <timeout_allowed>yes</timeout_allowed>
+</command>
+```
+-Blok <command> berisi informasi tentang tindakan yang akan dijalankan pada agen wazuh.
+1. <name> menetapkan untuk perintah.
+2. <executable> menentukan skrip respons aktif atau yang dapat dieksekusi yang harus dijalankan pada pemicu.
+3. <timeout> mengizinkan batas waktu setelah jangka waktu tertentu.
+
+ 2. Menambahkan blok <active-response> dibawah ini ke file konfigurasi server wazuh /var/ossec/etc/ossec.conf
+```sh
+<ossec_config>
+  <active-response>
+    <command>firewall-drop</command>
+    <location>local</location>
+    <rules_id>5763</rules_id>
+    <timeout>180</timeout>
+  </active-response>
+</ossec_config>
+```
+- <command> menentukan perintah untuk konfigurasi
+- <location> menentukan dimana perintah dijalankan
+- <rules_id> modul respons aktif menjalankan perintah jika ID atauran diaktifkan
+- <timeout> menentukan berapa lama tindakan respons aktif harus berlangsung
+
+3. memulai ulang layanan manager wazuh
+```sh
+sudo systemctl restart wazuh-manager
+```
+
+UJI KONFIGURASI
+1. Ping titik akhir RHEL dari titik akhir ubuntu untuk mengkonfirmasi adanya jaringan antara titil akhir penyerang dan korban
+```sh
+ping <RHEL_IP>
+```
+Output
+```sh
+PING <RHEL_IP> (<RHEL_IP>) 56(84) bytes of data.
+64 bytes from <RHEL_IP>: icmp_seq=1 ttl=64 time=0.602 ms
+64 bytes from <RHEL_IP>: icmp_seq=2 ttl=64 time=0.774 ms
+```
+2. Dititk akhir ubuntu,install Hydra.
+```sh
+sudo apt update && sudo apt install -y hydra
+```
+3. dititik akhir ubuntu,buat file teks dengan 10 kata sandi acak
+4. jalankan Hydra dari titik akhir ubuntu untuk menjalankan serangan brute force.Ganti <RHEL_USERNAME>dengan nama pengguna titik akhir RHEL, <PASSWD_LIST.txt>dengan jalur ke file kata sandi yang dibuat pada langkah sebelumnya, dan <RHEL_IP>dengan alamat IP titik akhir RHEL
+```sh
+sudo hydra -t 4 -l <RHEL_USERNAME> -P <PASSWD_LIST.txt> <RHEL_IP> ssh
+```
+setelah serangan berakhir anda dapat melihat dari dashboard wazuh bahwa 5763 diaktifkan.
+5. ping titik akhir korban dari penyerang dalam waktu 3 menit setelah eksekusi serangan
+```sh
+ping <RHEL_IP>
+```
+OUTPUT
+```sh
+PING 10.0.0.5 (10.0.0.5) 56(84) bytes of data.
+^C
+--- 10.0.0.5 ping statistics ---
+12 packets transmitted, 0 received, 100% packet loss, time 11000ms
+```
+
+Menghasilkan peringatan ketika respons diaktifkan
+titik terakhir linux yang dipantau memiliki file log tempat /var/ossec/logs/active-responses.logWazuh mendaftarkan aktivitas respons aktif. Anda dapat menemukan bagian yang relevan di /var/ossec/etc/ossec.conffile konfigurasi server Wazuh seperti yang ditunjukkan di bawah ini
+```sh
+<localfile>
+  <log_format>syslog</log_format>
+  <location>/var/ossec/logs/active-responses.log</location>
+</localfile>
+```
+saat respon aktif terpicu,peringatan terkait akan muncul di dashboard wazuh.
+peringatan tersebut muncul karena ID aturan 651 merupakan bagian dari /var/ossec/ruleset/rules/0015-ossec_rules.xml
+
+
