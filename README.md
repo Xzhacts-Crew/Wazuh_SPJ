@@ -20,7 +20,7 @@ Instalasi Wazuh
 curl -sO https://packages.wazuh.com/4.7/wazuh-certs-tool.sh
 curl -sO https://packages.wazuh.com/4.7/config.yml
 ```
-2. Edit `./config.yml` dengan perintah dibawah:
+2. Edit ./config.yml dengan perintah dibawah:
 
 ```sh
 nodes:
@@ -52,7 +52,7 @@ nodes:
     - name: dashboard
       ip: "<dashboard-node-ip>"
 ```
-3.Run `./wazuh-certs-tool.sh.` untuk membuat certificate.
+3.Run ./wazuh-certs-tool.sh. untuk membuat certificate.
 
 ```sh
 bash ./wazuh-certs-tool.sh -A
@@ -259,7 +259,7 @@ Install Wazuh Agent pada Linux
    ![image](https://github.com/rodipisroi/LinuxServer/assets/104636035/5c3c1197-1346-44af-9fea-a4456d69489f)
 
 
-**Memblokir serangan brute force SSH dengan respons aktif**
+**MEMBLOKIR SERANGAN BRUTE FORCE SSH DENGAN RESPONS AKTIF**
 
 1. Buka file /var/essec/etc/ossec.conf dan verifikasi
 ```sh
@@ -339,4 +339,118 @@ titik terakhir linux yang dipantau memiliki file log tempat /var/ossec/logs/acti
 saat respon aktif terpicu,peringatan terkait akan muncul di dashboard wazuh.
 peringatan tersebut muncul karena ID aturan 651 merupakan bagian dari /var/ossec/ruleset/rules/0015-ossec_rules.xml
 
+**INTEGRASI WAZUH DAN TELEGRAM**
+Kirim wazuh alert melalui telegram.
 
+1. Buat bot telegram dan simpan API KEY dan CHAT ID dengan link dibawah
+```sh
+[<localfile>
+  <log_format>syslog</log_format>
+  <location>/var/ossec/logs/active-responses.log</location>
+</localfile>](https://api.telegram.org/bot<HTTP-API>/getUpdates)https://api.telegram.org/bot<HTTP-API>/getUpdates
+```
+2. Cek Library
+```sh
+#pip install requests
+```
+3. Masukin CHAT ID dalam custom-telegram.py
+```sh
+/var/ossec/integrations/
+```
+4. Mengatur permisssion 2 file
+```sh
+chown root:wazuh /var/ossec/integrations/custom-telegram*
+chmod 750 /var/ossec/integrations/custom-telegram*
+```
+5. Masukkan API KEY dalam blok konfigurasi /var/ossec/etc/ossec.conf
+```sh
+    <integration>
+        <name>custom-telegram</name>
+        <level>3</level>
+        <hook_url>https://api.telegram.org/bot<API_KEY>/sendMessage</hook_url>
+        <alert_format>json</alert_format>
+    </integration>
+```
+6. Reastar Wazuh server
+```sh
+systemctl restart wazuh-manager
+```
+CUSTOM TELEGRAM
+```sh
+#!/bin/sh
+
+WPYTHON_BIN="framework/python/bin/python3"
+
+SCRIPT_PATH_NAME="$0"
+
+DIR_NAME="$(cd $(dirname ${SCRIPT_PATH_NAME}); pwd -P)"
+SCRIPT_NAME="$(basename ${SCRIPT_PATH_NAME})"
+
+case ${DIR_NAME} in
+    */active-response/bin | */wodles*)
+        if [ -z "${WAZUH_PATH}" ]; then
+            WAZUH_PATH="$(cd ${DIR_NAME}/../..; pwd)"
+        fi
+
+        PYTHON_SCRIPT="${DIR_NAME}/${SCRIPT_NAME}.py"
+    ;;
+    */bin)
+        if [ -z "${WAZUH_PATH}" ]; then
+            WAZUH_PATH="$(cd ${DIR_NAME}/..; pwd)"
+        fi
+
+        PYTHON_SCRIPT="${WAZUH_PATH}/framework/scripts/${SCRIPT_NAME}.py"
+    ;;
+     */integrations)
+        if [ -z "${WAZUH_PATH}" ]; then
+            WAZUH_PATH="$(cd ${DIR_NAME}/..; pwd)"
+        fi
+
+        PYTHON_SCRIPT="${DIR_NAME}/${SCRIPT_NAME}.py"
+    ;;
+esac
+
+
+${WAZUH_PATH}/${WPYTHON_BIN} ${PYTHON_SCRIPT} "$@"
+```
+
+CUSTOM TELEGRAM
+```sh
+#!/usr/bin/env python
+
+import sys
+import json
+import requests
+from requests.auth import HTTPBasicAuth
+
+#CHAT_ID="-xxxx" --- change with your chat id 
+CHAT_ID=""    
+
+# Read configuration parameters
+alert_file = open(sys.argv[1])
+hook_url = sys.argv[3]
+
+
+# Read the alert file
+alert_json = json.loads(alert_file.read())
+alert_file.close()
+
+# Extract data fields
+alert_level = alert_json['rule']['level'] if 'level' in alert_json['rule'] else "N/A"
+description = alert_json['rule']['description'] if 'description' in alert_json['rule'] else "N/A"
+agent = alert_json['agent']['name'] if 'name' in alert_json['agent'] else "N/A"
+# Generate request
+msg_data = {}
+msg_data['chat_id'] = CHAT_ID
+msg_data['text'] = {}
+msg_data['text']['description'] =  description
+msg_data['text']['alert_level'] = str(alert_level)
+msg_data['text']['agent'] =  agent
+headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
+
+
+# Send the request
+requests.post(hook_url, headers=headers, data=json.dumps(msg_data))
+
+sys.exit(0)
+```
