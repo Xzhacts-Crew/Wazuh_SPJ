@@ -52,7 +52,7 @@ nodes:
     - name: dashboard
       ip: "<dashboard-node-ip>"
 ```
-3.Run ./wazuh-certs-tool.sh. untuk membuat certificate.
+3.Run `./wazuh-certs-tool.sh.` untuk membuat certificate.
 
 ```sh
 bash ./wazuh-certs-tool.sh -A
