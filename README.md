@@ -1,5 +1,5 @@
-#WAZUH SPJ
-**Anggota Kelompok 09:**
+# WAZUH SPJ
+## Anggota Kelompok 09:
 
 | Nim | NAMA |
 | ------ | ------ |
@@ -10,7 +10,7 @@
 | 22.83.0803 | Ridho Fathoni Muqorrobin |
 | 22.83.0815 | Zaimy Cakra Andika |
 
-**Kelompok kami membuat monitoring log menggunakan WAZUH SIEM**
+### Kelompok kami membuat monitoring log menggunakan WAZUH SIEM
 
 Instalasi Wazuh
 
@@ -20,7 +20,7 @@ Instalasi Wazuh
 curl -sO https://packages.wazuh.com/4.7/wazuh-certs-tool.sh
 curl -sO https://packages.wazuh.com/4.7/config.yml
 ```
-2. Edit ./config.yml dengan perintah dibawah:
+2. Edit `./config.yml` dengan perintah dibawah:
 
 ```sh
 nodes:
@@ -52,18 +52,18 @@ nodes:
     - name: dashboard
       ip: "<dashboard-node-ip>"
 ```
-3.Run ./wazuh-certs-tool.sh. untuk membuat certificate.
+3. Run `./wazuh-certs-tool.sh.` untuk membuat certificate.
 
 ```sh
 bash ./wazuh-certs-tool.sh -A
 ```
-4.Compress ke format tar.
+4. Compress ke format `tar.`
 
 ```sh
 tar -cvf ./wazuh-certificates.tar -C ./wazuh-certificates/ .
 rm -rf ./wazuh-certificates
 ```
-5.Install packet Node
+5. Install packet `Node`
 
 Installasi Node
 
@@ -71,20 +71,20 @@ Installasi Node
 ```sh
 apt-get install gnupg apt-transport-https
 ```
-2. tambahkan repository wazuh
+tambahkan repository wazuh
    1. install packet
 ```sh
 apt-get install gnupg apt-transport-https
 ```
- 2. install kunci GPG
+ 3. install kunci GPG
 ```sh
 curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | gpg --no-default-keyring --keyring gnupg-ring:/usr/share/keyrings/wazuh.gpg --import && chmod 644 /usr/share/keyrings/wazuh.gpg
 ```
- 3. tambahkan repositori
+ 4. tambahkan repositori
 ```sh
 echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt/ stable main" | tee -a /etc/apt/sources.list.d/wazuh.list
 ```
- 4. Update Repositori
+ 5. Update Repositori
 ```sh
 apt-get update
 ```
@@ -95,7 +95,7 @@ apt-get -y install wazuh-indexer
 ```
    
 Konfigurasi pengindeks Wazuh
-1. edit file konfigurasi /etc/wazuh-indexer/opensearch.yml lalu ganti dengan nilai berikut:
+1. edit file konfigurasi `/etc/wazuh-indexer/opensearch.yml` lalu ganti dengan nilai berikut:
   1. network.host
      gunakan alamat node yang sama config.yml
   2. node.name.config.yml. Misalnya, node-1
@@ -106,21 +106,21 @@ cluster.initial_master_nodes:
 - "node-2"
 - "node-3"
 ```
-4. discovery.seed_hosts: daftar alamat node
+4. `discovery.seed_hosts:` daftar alamat node
  ```sh
 discovery.seed_hosts:
   - "10.0.0.1"
   - "10.0.0.2"
   - "10.0.0.3"
 ```
-5. plugins.security.nodes_dn Anda. dan ubah nama umum (CN) serta nilai sesuai dengan pengaturan dan definisi node-2 dan node-3config.yml
+5. `plugins.security.nodes_dn` Anda. dan ubah nama umum (CN) serta nilai sesuai dengan pengaturan dan definisi node-2 dan node-3config.yml
  ```sh
 plugins.security.nodes_dn:
 - "CN=node-1,OU=Wazuh,O=Wazuh,L=California,C=US"
 - "CN=node-2,OU=Wazuh,O=Wazuh,L=California,C=US"
 - "CN=node-3,OU=Wazuh,O=Wazuh,L=California,C=US"
 ```
-6. Deploy Certificate. Ubah kata ($NODE_NAME) menjadi nama node sesuai config.yml. Misal: node-1
+6. Deploy Certificate. Ubah kata `($NODE_NAME)` menjadi nama node sesuai `config.yml.` Misal: node-1
 ```sh
 mkdir /etc/wazuh-indexer/certs
 tar -xf ./wazuh-certificates.tar -C /etc/wazuh-indexer/certs/ ./$NODE_NAME.pem ./$NODE_NAME-key.pem ./admin.pem ./admin-key.pem ./root-ca.pem
@@ -161,7 +161,7 @@ apt-get -y install filebeat
 ```sh
 curl -so /etc/filebeat/filebeat.yml https://packages.wazuh.com/4.7/tpl/wazuh/filebeat/filebeat.yml
 ```
-6. Edit file /etc/filebeat/filebeat.yml. Ubah host sesuai alamat IP Wazuh.
+6. Edit file `/etc/filebeat/filebeat.yml.` Ubah host sesuai alamat IP Wazuh.
 ![image](https://github.com/rodipisroi/LinuxServer/assets/104636035/dd432954-b221-4faf-ae05-58998344f3f1)
 
 8. Create filebeat keystore
@@ -182,7 +182,7 @@ chmod go+r /etc/filebeat/wazuh-template.json
 ```sh
 curl -s https://packages.wazuh.com/4.x/filebeat/wazuh-filebeat-0.3.tar.gz | tar -xvz -C /usr/share/filebeat/module
 ```
-11. Deploy certificate. Ubah kata ($NODE_NAME) menjadi nama node sesuai config.yml. Misal: node-1
+11. Deploy certificate. Ubah kata `($NODE_NAME)` menjadi nama node sesuai `config.yml.` Misal: node-1
 ```sh
 mkdir /etc/filebeat/certs
 tar -xf ./wazuh-certificates.tar -C /etc/filebeat/certs/ ./$NODE_NAME.pem ./$NODE_NAME-key.pem ./root-ca.pem
@@ -214,10 +214,10 @@ apt-get install debhelper tar curl libcap2-bin #debhelper version 9 or later
 ```sh
 apt-get -y install wazuh-dashboard
 ```   
-3. Edit file /etc/wazuh-dashboard/open_dashboard.yml. Ganti opensearch_host sesuai IP Wazuh
+3. Edit file `/etc/wazuh-dashboard/open_dashboard.yml.` Ganti `opensearch_host` sesuai IP Wazuh
 ![image](https://github.com/rodipisroi/LinuxServer/assets/104636035/2cdd629c-ceeb-47fd-a1f3-4484bad37274)
 
-4. eploy certificate. Ubah kata ($NODE_NAME) menjadi nama node sesuai config.yml. Misal: node-1
+4. eploy certificate. Ubah kata `($NODE_NAME)` menjadi nama node sesuai `config.yml.` Misal: node-1
 ```sh
 mkdir /etc/wazuh-dashboard/certs
 tar -xf ./wazuh-certificates.tar -C /etc/wazuh-dashboard/certs/ ./$NODE_NAME.pem ./$NODE_NAME-key.pem ./root-ca.pem
@@ -259,9 +259,9 @@ Install Wazuh Agent pada Linux
    ![image](https://github.com/rodipisroi/LinuxServer/assets/104636035/5c3c1197-1346-44af-9fea-a4456d69489f)
 
 
-**MEMBLOKIR SERANGAN BRUTE FORCE SSH DENGAN RESPONS AKTIF**
+### MEMBLOKIR SERANGAN BRUTE FORCE SSH DENGAN RESPONS AKTIF
 
-1. Buka file /var/essec/etc/ossec.conf dan verifikasi
+1. Buka file `/var/essec/etc/ossec.conf` dan verifikasi
 ```sh
 <command>
   <name>firewall-drop</name>
@@ -269,12 +269,12 @@ Install Wazuh Agent pada Linux
   <timeout_allowed>yes</timeout_allowed>
 </command>
 ```
--Blok <command> berisi informasi tentang tindakan yang akan dijalankan pada agen wazuh.
-1. <name> menetapkan untuk perintah.
-2. <executable> menentukan skrip respons aktif atau yang dapat dieksekusi yang harus dijalankan pada pemicu.
-3. <timeout> mengizinkan batas waktu setelah jangka waktu tertentu.
+-Blok `<command>` berisi informasi tentang tindakan yang akan dijalankan pada agen wazuh.
+1. `<name>` menetapkan untuk perintah.
+2. `<executable>` menentukan skrip respons aktif atau yang dapat dieksekusi yang harus dijalankan pada pemicu.
+3. `<timeout>` mengizinkan batas waktu setelah jangka waktu tertentu.
 
- 2. Menambahkan blok <active-response> dibawah ini ke file konfigurasi server wazuh /var/ossec/etc/ossec.conf
+ 2. Menambahkan blok `<active-response>` dibawah ini ke file konfigurasi server wazuh `/var/ossec/etc/ossec.conf`
 ```sh
 <ossec_config>
   <active-response>
@@ -285,10 +285,10 @@ Install Wazuh Agent pada Linux
   </active-response>
 </ossec_config>
 ```
-- <command> menentukan perintah untuk konfigurasi
-- <location> menentukan dimana perintah dijalankan
-- <rules_id> modul respons aktif menjalankan perintah jika ID atauran diaktifkan
-- <timeout> menentukan berapa lama tindakan respons aktif harus berlangsung
+- `<command>` menentukan perintah untuk konfigurasi
+- `<location>` menentukan dimana perintah dijalankan
+- `<rules_id>` modul respons aktif menjalankan perintah jika ID atauran diaktifkan
+- `<timeout>` menentukan berapa lama tindakan respons aktif harus berlangsung
 
 3. memulai ulang layanan manager wazuh
 ```sh
@@ -311,7 +311,7 @@ PING <RHEL_IP> (<RHEL_IP>) 56(84) bytes of data.
 sudo apt update && sudo apt install -y hydra
 ```
 3. dititik akhir ubuntu,buat file teks dengan 10 kata sandi acak
-4. jalankan Hydra dari titik akhir ubuntu untuk menjalankan serangan brute force.Ganti <RHEL_USERNAME>dengan nama pengguna titik akhir RHEL, <PASSWD_LIST.txt>dengan jalur ke file kata sandi yang dibuat pada langkah sebelumnya, dan <RHEL_IP>dengan alamat IP titik akhir RHEL
+4. jalankan Hydra dari titik akhir ubuntu untuk menjalankan serangan brute force.Ganti `<RHEL_USERNAME>` dengan nama pengguna titik akhir RHEL, `<PASSWD_LIST.txt>` dengan jalur ke file kata sandi yang dibuat pada langkah sebelumnya, dan `<RHEL_IP>` dengan alamat IP titik akhir RHEL
 ```sh
 sudo hydra -t 4 -l <RHEL_USERNAME> -P <PASSWD_LIST.txt> <RHEL_IP> ssh
 ```
@@ -329,7 +329,7 @@ PING 10.0.0.5 (10.0.0.5) 56(84) bytes of data.
 ```
 
 Menghasilkan peringatan ketika respons diaktifkan
-titik terakhir linux yang dipantau memiliki file log tempat /var/ossec/logs/active-responses.logWazuh mendaftarkan aktivitas respons aktif. Anda dapat menemukan bagian yang relevan di /var/ossec/etc/ossec.conffile konfigurasi server Wazuh seperti yang ditunjukkan di bawah ini
+titik terakhir linux yang dipantau memiliki file log tempat `/var/ossec/logs/active-responses.log` Wazuh mendaftarkan aktivitas respons aktif. Anda dapat menemukan bagian yang relevan di `/var/ossec/etc/ossec.conffile` konfigurasi server Wazuh seperti yang ditunjukkan di bawah ini
 ```sh
 <localfile>
   <log_format>syslog</log_format>
@@ -337,9 +337,9 @@ titik terakhir linux yang dipantau memiliki file log tempat /var/ossec/logs/acti
 </localfile>
 ```
 saat respon aktif terpicu,peringatan terkait akan muncul di dashboard wazuh.
-peringatan tersebut muncul karena ID aturan 651 merupakan bagian dari /var/ossec/ruleset/rules/0015-ossec_rules.xml
+peringatan tersebut muncul karena ID aturan 651 merupakan bagian dari `/var/ossec/ruleset/rules/0015-ossec_rules.xml`
 
-**INTEGRASI WAZUH DAN TELEGRAM**
+### INTEGRASI WAZUH DAN TELEGRAM
 Kirim wazuh alert melalui telegram.
 
 1. Buat bot telegram dan simpan API KEY dan CHAT ID dengan link dibawah
@@ -362,7 +362,7 @@ Kirim wazuh alert melalui telegram.
 chown root:wazuh /var/ossec/integrations/custom-telegram*
 chmod 750 /var/ossec/integrations/custom-telegram*
 ```
-5. Masukkan API KEY dalam blok konfigurasi /var/ossec/etc/ossec.conf
+5. Masukkan API KEY dalam blok konfigurasi `/var/ossec/etc/ossec.conf`
 ```sh
     <integration>
         <name>custom-telegram</name>
