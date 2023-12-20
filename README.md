@@ -1,4 +1,5 @@
 # WAZUH SPJ
+### Kelompok kami membuat monitoring log menggunakan [WAZUH](https://wazuh.com/) SIEM
 ## Anggota Kelompok 09:
 
 | Nim | NAMA |
@@ -10,7 +11,16 @@
 | 22.83.0803 | Ridho Fathoni Muqorrobin |
 | 22.83.0815 | Zaimy Cakra Andika |
 
-### Kelompok kami membuat monitoring log menggunakan WAZUH SIEM
+
+### Proses Pengerjaan
+
+- Instalasi Wazuh
+- File integrity Monitor
+- Integrasi dengan bot Telegram
+- Active Response
+- Block Malicious Actor
+- Integrasi dengan Virustotal
+
 
 Instalasi Wazuh
 
@@ -375,7 +385,7 @@ chmod 750 /var/ossec/integrations/custom-telegram*
 ```sh
 systemctl restart wazuh-manager
 ```
-CUSTOM TELEGRAM
+Custom Telegram
 ```sh
 #!/bin/sh
 
@@ -414,7 +424,7 @@ esac
 ${WAZUH_PATH}/${WPYTHON_BIN} ${PYTHON_SCRIPT} "$@"
 ```
 
-CUSTOM TELEGRAM
+Custom Telegram
 ```sh
 #!/usr/bin/env python
 
