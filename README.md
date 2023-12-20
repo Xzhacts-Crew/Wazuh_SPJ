@@ -20,7 +20,7 @@ Instalasi Wazuh
 curl -sO https://packages.wazuh.com/4.7/wazuh-certs-tool.sh
 curl -sO https://packages.wazuh.com/4.7/config.yml
 ```
-2. Edit ./config.yml dengan perintah dibawah:
+2. Edit `./config.yml` dengan perintah dibawah:
 
 ```sh
 nodes:
