@@ -1,5 +1,6 @@
 # WAZUH SPJ
 ### Kelompok kami membuat monitoring log menggunakan [WAZUH](https://wazuh.com/) SIEM
+
 ## Anggota Kelompok 09:
 
 | Nim | NAMA |
@@ -12,12 +13,12 @@
 | 22.83.0815 | Zaimy Cakra Andika |
 
 
-### Proses Pengerjaan
+### Pengerjaan
 
-- Instalasi Wazuh
+- Instalasi Wazuh Server dan Agent
 - File integrity Monitor
-- Integrasi dengan bot Telegram
-- Active Response
+- Integrasi Alert dengan bot Telegram
+- Active Response & Proof of Concept
 - Block Malicious Actor
 - Integrasi dengan Virustotal
 
