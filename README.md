@@ -464,3 +464,142 @@ requests.post(hook_url, headers=headers, data=json.dumps(msg_data))
 
 sys.exit(0)
 ```
+### Detecting and Removing malware virus total
+Menginstall packet dan membuat script respons yang menghapus file berbahaya `/root`
+1. mencari blok file komfigurasi wazuh
+```sh
+<syscheck>/var/ossec/etc/ossec.conf<disabled>no
+```
+2. menambahkan entri dalam blok guna konfigurasi direktori : `<syscheck>/root`
+```sh
+<directories realtime="yes">/root</directories>
+```
+3. install, utilitas yang memproses input json scripts aktif `jq`
+```sh
+sudo apt update
+sudo apt -y install jq
+```
+4.membuat script `/var/ossec/active-response/bin/remove-threat.sh`
+```sh
+#!/bin/bash
+
+LOCAL=`dirname $0`;
+cd $LOCAL
+cd ../
+
+PWD=`pwd`
+
+read INPUT_JSON
+FILENAME=$(echo $INPUT_JSON | jq -r .parameters.alert.data.virustotal.source.file)
+COMMAND=$(echo $INPUT_JSON | jq -r .command)
+LOG_FILE="${PWD}/../logs/active-responses.log"
+
+#------------------------ Analyze command -------------------------#
+if [ ${COMMAND} = "add" ]
+then
+ # Send control message to execd
+ printf '{"version":1,"origin":{"name":"remove-threat","module":"active-response"},"command":"check_keys", "parameters":{"keys":[]}}\n'
+
+ read RESPONSE
+ COMMAND2=$(echo $RESPONSE | jq -r .command)
+ if [ ${COMMAND2} != "continue" ]
+ then
+  echo "`date '+%Y/%m/%d %H:%M:%S'` $0: $INPUT_JSON Remove threat active response aborted" >> ${LOG_FILE}
+  exit 0;
+ fi
+fi
+
+# Removing file
+rm -f $FILENAME
+if [ $? -eq 0 ]; then
+ echo "`date '+%Y/%m/%d %H:%M:%S'` $0: $INPUT_JSON Successfully removed threat" >> ${LOG_FILE}
+else
+ echo "`date '+%Y/%m/%d %H:%M:%S'` $0: $INPUT_JSON Error removing threat" >> ${LOG_FILE}
+fi
+
+exit 0;
+```
+5. mengubah kepemilikan file `/var/ossec/active-response/bin/remove-threat.sh`
+```sh
+sudo chmod 750 /var/ossec/active-response/bin/remove-threat.sh
+sudo chown root:wazuh /var/ossec/active-response/bin/remove-threat.sh
+```
+6. memulai ulang agen wazuh
+```sh
+sudo systemctl restart wazuh-agent
+```
+
+### Server Wazuh
+1. menambahkan aturan untuk memperingati tentang perubahan dalam direktori `/var/ossec/etc/rules/local_rules.xml/root`
+```sh
+<group name="syscheck,pci_dss_11.5,nist_800_53_SI.7,">
+    <!-- Rules for Linux systems -->
+    <rule id="100200" level="7">
+        <if_sid>550</if_sid>
+        <field name="file">/root</field>
+        <description>File modified in /root directory.</description>
+    </rule>
+    <rule id="100201" level="7">
+        <if_sid>554</if_sid>
+        <field name="file">/root</field>
+        <description>File added to /root directory.</description>
+    </rule>
+</group>
+```
+2. menambahkan konfigurasi untuk mengaktifkan integrasi virus total `/var/ossec/etc/ossec.conf<YOUR_VIRUS_TOTAL_API_KEY>100200100201`
+```sh
+<ossec_config>
+  <integration>
+    <name>virustotal</name>
+    <api_key><YOUR_VIRUS_TOTAL_API_KEY></api_key> <!-- Replace with your VirusTotal API key -->
+    <rule_id>100200,100201</rule_id>
+    <alert_format>json</alert_format>
+  </integration>
+</ossec_config>
+```
+3. tambahkan blok dibawah ke dalam file server wazuh `/var/ossec/etc/ossec.confremove-threat.sh`
+```sh
+<ossec_config>
+  <command>
+    <name>remove-threat</name>
+    <executable>remove-threat.sh</executable>
+    <timeout_allowed>no</timeout_allowed>
+  </command>
+
+  <active-response>
+    <disabled>no</disabled>
+    <command>remove-threat</command>
+    <location>local</location>
+    <rules_id>87105</rules_id>
+  </active-response>
+</ossec_config>
+```
+4. manambahkan rules ke file server wazuh `/var/ossec/etc/rules/local_rules.xml`
+```sh
+<group name="virustotal,">
+  <rule id="100092" level="12">
+    <if_sid>657</if_sid>
+    <match>Successfully removed threat</match>
+    <description>$(parameters.program) removed threat located at $(parameters.alert.data.virustotal.source.file)</description>
+  </rule>
+
+  <rule id="100093" level="12">
+    <if_sid>657</if_sid>
+    <match>Error removing threat</match>
+    <description>Error removing threat located at $(parameters.alert.data.virustotal.source.file)</description>
+  </rule>
+</group>
+```
+5. mulai ulang manager wazuh
+```sh
+sudo systemctl restart wazuh-manager
+```
+
+### Emulasi Serangan
+1. untuk file uji EICAR direktori `/root`
+```sh
+sudo cd /root
+sudo curl -LO https://secure.eicar.org/eicar.com && ls -lah eicar.com
+```
+### Memvisualisasikan Warning
+memvisualisasikan data peringatan pada dashboard Wazuh `rule.id: is one of 553,100092,87105,100201`
